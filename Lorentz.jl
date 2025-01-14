@@ -1,24 +1,24 @@
 #!/usr/bin/env julia
 
-using DifferentialEquations
+using OrdinaryDiffEq
 using Plots
 
-function lorentz(u,p,t)
+function lorentz!(du,u,p,t)
     x, y, z = u
     sigma, rho, beta = p
 
-    dx = sigma*(y - x)
-    dy = x*(rho - z) - y
-    dz = x*y - beta*z
+    du[1] = sigma*(y - x)
+    du[2] = x*(rho - z) - y
+    du[3] = x*y - beta*z
 
-    return [dx,dy,dz]
+    return du
 end
 
 u0 = [1.0,0.0,0.0]
 p = [10,28,8/3]
-t = (0.0,100.0)
+tspan = (0.0,100.0)
 
-prob = ODEProblem(lorentz,u0,t,p)
+prob = ODEProblem(lorentz!,u0,tspan,p)
 
 sol = solve(prob,Tsit5())
 sol = convert(Array,sol)
